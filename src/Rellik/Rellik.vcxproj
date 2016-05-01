@@ -125,12 +125,15 @@
     <ClCompile Include="keyboard.c" />
     <ClCompile Include="logging.c" />
     <ClCompile Include="program.c" />
+    <ClCompile Include="rellik.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gametime.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="core.h" />
+    <ClInclude Include="rellik.h" />
     <ClInclude Include="status.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

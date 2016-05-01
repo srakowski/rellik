@@ -6,39 +6,10 @@
 #include <GL\GLU.h>
 #include "core.h"
 #include "input.h"
+#include "rellik.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
-
-static RellikStatus run();
-static RellikStatus run_in_window(SDL_Window *window);
-static RellikStatus initialize_game();
-static RellikStatus run_game();
-static void handle_input(SDL_Event *event);
-static void handle_keyboard_input(SDL_KeyboardEvent *kb_event);
-static void dispose_game();
-
-/* -------------------------------------------------------------------------- */
-
-int main(int argc, char **argv)
-{
-	RellikStatus status = RLK_SUCCESS;
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		flog("SDL_Init failed");
-		exit(EXIT_FAILURE);
-	}
-
-	status = run();	
-
-	SDL_Quit();
-	
-	if (status != RLK_SUCCESS)
-		flog("run failed: %s", getRellikStatusMsg(status));
-
-	exit(status == RLK_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE);
-}
 
 /* -------------------------------------------------------------------------- */
 
@@ -72,26 +43,11 @@ static RellikStatus run_in_window(SDL_Window *window)
 {
 	RellikStatus status = RLK_SUCCESS;
 
-	status = initialize_game();
-	if (status != RLK_SUCCESS)
-	{
-		elog("initialize_game returned: %s", getRellikStatusMsg(status));
-		return status;
-	}
-
 	status = run_game();
 	if (status != RLK_SUCCESS)
 		elog("run_game returned: %s", getRellikStatusMsg(status));
 
-	dispose_game();
 	return status;
-}
-
-/* -------------------------------------------------------------------------- */
-
-static RellikStatus initialize_game()
-{
-	return RLK_SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,8 +57,12 @@ static RellikStatus run_game()
 	bool end_game = false;
 	SDL_Event event;
 
-	//KeyboardState previousState = keyboard_GetState();
-	//KeyboardState currentState = keyboard_GetState();
+	Rellik *game = rellik_Create();
+	if (game == NULL)
+	{
+		elog("rellik_Create failed");
+		return RLK_CREATE_FAILURE;
+	}
 
 	while (!end_game)
 	{
@@ -114,18 +74,12 @@ static RellikStatus run_game()
 				end_game = true;
 		}
 
-		// update game logic
-		//previousState = currentState;
-		//currentState = keyboard_GetState();
-		//if (keyboardState_IsDown(&previousState, KEY_W) && !keyboardState_IsDown(&currentState, KEY_W))
-		//	ilog("W was pressed");
+		rellik_Update(game, NULL);
 
-
-
-
-		// render frame
+		rellik_Render(game);
 	}
 
+	rellik_Destroy(game);
 	return RLK_SUCCESS;
 }
 
@@ -137,7 +91,7 @@ static void handle_input(SDL_Event *event)
 	{
 	case SDL_KEYDOWN:
 	case SDL_KEYUP:
-		handle_keyboard_input(&event->key);	
+		handle_keyboard_input(&event->key);
 		break;
 	default:
 		break;
@@ -161,11 +115,28 @@ static void handle_keyboard_input(SDL_KeyboardEvent *kb_event)
 
 /* -------------------------------------------------------------------------- */
 
-static void dispose_game()
+int main(int argc, char **argv)
 {
+	RellikStatus status = RLK_SUCCESS;
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		flog("SDL_Init failed");
+		exit(EXIT_FAILURE);
+	}
+
+	status = run();	
+
+	SDL_Quit();
+	
+	if (status != RLK_SUCCESS)
+		flog("run failed: %s", getRellikStatusMsg(status));
+
+	exit(status == RLK_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 /* -------------------------------------------------------------------------- */
+
 
 
 //static int run_rellik()
