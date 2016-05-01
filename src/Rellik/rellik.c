@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "core.h"
 #include "input.h"
 #include "rellik.h"
@@ -27,7 +28,7 @@ void rellik_Initialize(Rellik *self)
 {
 }
 
-void rellik_Update(Rellik *self, GameTime *gameTime)
+void rellik_Update(Rellik *self, GameTime gameTime)
 {
 	self->previousState = self->currentState;
 	self->currentState = keyboard_GetState();

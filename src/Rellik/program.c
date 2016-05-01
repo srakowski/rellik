@@ -13,6 +13,84 @@
 
 /* -------------------------------------------------------------------------- */
 
+static void handle_keyboard_input(SDL_KeyboardEvent *kb_event)
+{
+	// TODO: map all the keys
+	if (kb_event->keysym.sym == SDLK_w)
+		keyboard_UpdateKeyState(KEY_W, kb_event->type == SDL_KEYDOWN);
+	else if (kb_event->keysym.sym == SDLK_a)
+		keyboard_UpdateKeyState(KEY_A, kb_event->type == SDL_KEYDOWN);
+	else if (kb_event->keysym.sym == SDLK_s)
+		keyboard_UpdateKeyState(KEY_S, kb_event->type == SDL_KEYDOWN);
+	else if (kb_event->keysym.sym == SDLK_d)
+		keyboard_UpdateKeyState(KEY_D, kb_event->type == SDL_KEYDOWN);
+}
+
+/* -------------------------------------------------------------------------- */
+
+static void handle_input(SDL_Event *event)
+{
+	switch (event->type)
+	{
+	case SDL_KEYDOWN:
+	case SDL_KEYUP:
+		handle_keyboard_input(&event->key);
+		break;
+	default:
+		break;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+static RellikStatus run_game()
+{
+	bool end_game = false;
+	SDL_Event event;
+
+	Rellik *game = rellik_Create();
+	if (game == NULL)
+	{
+		elog("rellik_Create failed");
+		return RLK_CREATE_FAILURE;
+	}
+
+	GameTime gameTime = { 0.0f };
+
+	while (!end_game)
+	{
+		// read events
+		while (SDL_PollEvent(&event))
+		{
+			handle_input(&event);
+			if (event.type == SDL_QUIT)
+				end_game = true;
+		}
+
+		rellik_Update(game, gameTime);
+
+		rellik_Render(game);
+	}
+
+	rellik_Destroy(game);
+	return RLK_SUCCESS;
+}
+
+/* -------------------------------------------------------------------------- */
+
+static RellikStatus run_in_window(SDL_Window *window)
+{
+	RellikStatus status = RLK_SUCCESS;
+
+	status = run_game();
+	if (status != RLK_SUCCESS)
+		elog("run_game returned: %s", getRellikStatusMsg(status));
+
+	return status;
+}
+
+/* -------------------------------------------------------------------------- */
+
 static RellikStatus run()
 {
 	RellikStatus status = RLK_SUCCESS;
@@ -35,82 +113,6 @@ static RellikStatus run()
 		elog("run_in_window returned: %s", getRellikStatusMsg(status));
 
 	return status;
-}
-
-/* -------------------------------------------------------------------------- */
-
-static RellikStatus run_in_window(SDL_Window *window)
-{
-	RellikStatus status = RLK_SUCCESS;
-
-	status = run_game();
-	if (status != RLK_SUCCESS)
-		elog("run_game returned: %s", getRellikStatusMsg(status));
-
-	return status;
-}
-
-/* -------------------------------------------------------------------------- */
-
-static RellikStatus run_game()
-{
-	bool end_game = false;
-	SDL_Event event;
-
-	Rellik *game = rellik_Create();
-	if (game == NULL)
-	{
-		elog("rellik_Create failed");
-		return RLK_CREATE_FAILURE;
-	}
-
-	while (!end_game)
-	{
-		// read events
-		while (SDL_PollEvent(&event))
-		{
-			handle_input(&event);
-			if (event.type == SDL_QUIT)
-				end_game = true;
-		}
-
-		rellik_Update(game, NULL);
-
-		rellik_Render(game);
-	}
-
-	rellik_Destroy(game);
-	return RLK_SUCCESS;
-}
-
-/* -------------------------------------------------------------------------- */
-
-static void handle_input(SDL_Event *event)
-{
-	switch (event->type)
-	{
-	case SDL_KEYDOWN:
-	case SDL_KEYUP:
-		handle_keyboard_input(&event->key);
-		break;
-	default:
-		break;
-	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-static void handle_keyboard_input(SDL_KeyboardEvent *kb_event)
-{
-	// TODO: map all the keys
-	if (kb_event->keysym.sym == SDLK_w)
-		keyboard_UpdateKeyState(KEY_W, kb_event->type == SDL_KEYDOWN);
-	else if (kb_event->keysym.sym == SDLK_a)
-		keyboard_UpdateKeyState(KEY_A, kb_event->type == SDL_KEYDOWN);
-	else if (kb_event->keysym.sym == SDLK_s)
-		keyboard_UpdateKeyState(KEY_S, kb_event->type == SDL_KEYDOWN);
-	else if (kb_event->keysym.sym == SDLK_d)
-		keyboard_UpdateKeyState(KEY_D, kb_event->type == SDL_KEYDOWN);
 }
 
 /* -------------------------------------------------------------------------- */
