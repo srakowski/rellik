@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="inputstate.c" />
     <ClCompile Include="keyboard.c" />
     <ClCompile Include="logging.c" />
     <ClCompile Include="program.c" />
@@ -130,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="gametime.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="inputstate.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="logging.h" />
     <ClInclude Include="core.h" />
