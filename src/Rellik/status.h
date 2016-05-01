@@ -3,8 +3,11 @@
 
 typedef enum 
 {
-	RELLIK_INVALID = 0,
-	RELLIK_SUCCESS
+	RELLIK_STATUS_INVALID = 0,
+	RELLIK_STATUS_SUCCESS
 } RellikStatus;
+
+#define getRellikStatusMsg(code) ((code) == RELLIK_STATUS_SUCCESS ? "success" : \
+	"undefined status code: " #code)
 
 #endif

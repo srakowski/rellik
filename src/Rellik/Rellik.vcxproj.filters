@@ -29,5 +29,8 @@
     <ClInclude Include="logging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rellik_core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <GL\GLU.h>
-#include "logging.h"
+#include "rellik_core.h"
 
 static int run_rellik()
 {
@@ -218,7 +218,8 @@ int main(int argc, char **argv)
 
 	dlog("this is a debug message");
 
-	flog("its a trap!");
+	flog("its a trap! %s", getRellikStatusMsg(RELLIK_STATUS_SUCCESS));
+	flog("its a trap! %s", getRellikStatusMsg(RELLIK_STATUS_INVALID));
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
