@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <windows.h>
+#include <gl\gl.h>
 #include "core.h"
 #include "input.h"
 #include "rellik.h"
@@ -38,6 +40,7 @@ void rellik_Destroy(Rellik *self)
 
 void rellik_Initialize(Rellik *self)
 {
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void rellik_Update(Rellik *self, GameTime gameTime)
@@ -48,4 +51,6 @@ void rellik_Update(Rellik *self, GameTime gameTime)
 
 void rellik_Render(Rellik *self)
 {
+	assert(self);
+	glClear(GL_COLOR_BUFFER_BIT);
 }

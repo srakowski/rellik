@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <GL\GLU.h>
+#include <sdl.h>
+#include <sdl_opengl.h>
+#include <gl\gl.h>
+#include <gl\glu.h>
 #include "core.h"
 #include "input.h"
 #include "rellik.h"
@@ -43,7 +44,7 @@ static void handle_input(SDL_Event *event)
 
 /* -------------------------------------------------------------------------- */
 
-static RellikStatus run_game()
+static RellikStatus run_game_loop(SDL_Window *window)
 {
 	bool end_game = false;
 	SDL_Event event;
@@ -55,11 +56,12 @@ static RellikStatus run_game()
 		return RLK_CREATE_FAILURE;
 	}
 
+	rellik_Initialize(game);
+
 	GameTime gameTime = { 0.0f };
 
 	while (!end_game)
 	{
-		// read events
 		while (SDL_PollEvent(&event))
 		{
 			handle_input(&event);
@@ -70,6 +72,8 @@ static RellikStatus run_game()
 		rellik_Update(game, gameTime);
 
 		rellik_Render(game);
+
+		SDL_GL_SwapWindow(window);
 	}
 
 	rellik_Destroy(game);
@@ -82,10 +86,22 @@ static RellikStatus run_in_window(SDL_Window *window)
 {
 	RellikStatus status = RLK_SUCCESS;
 
-	status = run_game();
+	SDL_GLContext context = SDL_GL_CreateContext(window);
+	if (context == NULL)
+	{
+		elog("SDL_GL_CreateContext failed");
+		return RLK_SDL_FAILURE;
+	}
+
+	// TODO: see if this is needed and if it should b e done here
+	if (SDL_GL_SetSwapInterval(1) < 0)
+		wlog("Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+
+	status = run_game_loop(window);
 	if (status != RLK_SUCCESS)
 		elog("run_game returned: %s", getRellikStatusMsg(status));
 
+	SDL_GL_DeleteContext(context);
 	return status;
 }
 
