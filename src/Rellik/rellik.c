@@ -35,6 +35,7 @@ Rellik *rellik_Create()
 void rellik_Destroy(Rellik *self)
 {
 	assert(self);
+	inputState_Destroy(self->input);
 	free(self);
 }
 
